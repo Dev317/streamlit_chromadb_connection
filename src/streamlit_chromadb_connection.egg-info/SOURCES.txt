@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+src/streamlit_chromadb_connection/__init__.py
+src/streamlit_chromadb_connection/chromadb_connection.py
+src/streamlit_chromadb_connection.egg-info/PKG-INFO
+src/streamlit_chromadb_connection.egg-info/SOURCES.txt
+src/streamlit_chromadb_connection.egg-info/dependency_links.txt
+src/streamlit_chromadb_connection.egg-info/requires.txt
+src/streamlit_chromadb_connection.egg-info/top_level.txt

@@ -1,11 +1,11 @@
-name: CI
+name: TestPyPI
 
 on:
   push:
-    branches: [ "main", "dev/*"]
+    branches: [ "main"]
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,5 +20,10 @@ jobs:
               python -m pip install --upgrade pip
               pip install -r requirements.txt
 
-      - name: Unit test
-        run: python -m unittest discover -s tests/unit_tests -p '*_test.py'
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package
+        run: python3 -m twine upload --repository testpypi dist/*
+        with:
+          password: ${{ secrets.TestPyPI_API_TOKEN }}

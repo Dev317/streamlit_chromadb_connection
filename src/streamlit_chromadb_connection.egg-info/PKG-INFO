@@ -1,0 +1,16 @@
+Metadata-Version: 2.1
+Name: streamlit-chromadb-connection
+Version: 0.0.1
+Summary: A simple adapter connection for any Streamlit LLM-powered app to use ChromaDB vector database.
+Author-email: Dev317 <mineskiroxro@gmail.com>
+Project-URL: Homepage, https://github.com/Dev317/streamlit_chromadb_connection
+Project-URL: Issues, https://github.com/Dev317/streamlit_chromadb_connection/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: feedparser>=5.2.0
+Requires-Dist: html2text
+Requires-Dist: tomli; python_version < "3.11"

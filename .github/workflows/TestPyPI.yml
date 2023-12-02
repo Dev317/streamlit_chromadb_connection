@@ -24,7 +24,6 @@ jobs:
         run: python -m build
 
       - name: Publish package
-        run: python3 -m twine upload --repository testpypi dist/*
+        run: python3 -m twine upload --repository testpypi dist/* -u "__token__"
         env:
-          username: __token__
           password: ${{ secrets.TEST_PYPI_TOKEN }}

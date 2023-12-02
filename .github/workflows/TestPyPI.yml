@@ -24,6 +24,7 @@ jobs:
         run: python -m build
 
       - name: Publish package
-        run: python3 -m twine upload --repository testpypi dist/* -u "__token__"
-        env:
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
           password: ${{ secrets.TEST_PYPI_TOKEN }}

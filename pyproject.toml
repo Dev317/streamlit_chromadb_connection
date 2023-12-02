@@ -1,0 +1,22 @@
+[project]
+name = "streamlit_chromadb_connection"
+version = "0.0.1"
+authors = [
+  { name="Dev317", email="mineskiroxro@gmail.com" },
+]
+description = "A simple adapter connection for any Streamlit LLM-powered app to use ChromaDB vector database."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = ""
+Issues = ""
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"

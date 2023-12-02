@@ -6,7 +6,11 @@ on:
 
 jobs:
   publish:
+    name: Publish to TestPyPI
     runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/streamlit-chromadb-connection/
     permissions:
       id-token: write
 

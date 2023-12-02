@@ -12,11 +12,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "feedparser >= 5.2.0",
-    "html2text",
-    'tomli; python_version < "3.11"',
-]
 
 [project.urls]
 Homepage = "https://github.com/Dev317/streamlit_chromadb_connection"

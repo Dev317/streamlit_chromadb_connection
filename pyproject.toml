@@ -1,6 +1,6 @@
 [project]
 name = "streamlit_chromadb_connection"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
   { name="Dev317", email="mineskiroxro@gmail.com" },
 ]

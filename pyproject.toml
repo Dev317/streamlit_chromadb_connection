@@ -14,8 +14,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = ""
-Issues = ""
+Homepage = "https://github.com/Dev317/streamlit_chromadb_connection"
+Issues = "https://github.com/Dev317/streamlit_chromadb_connection/issues"
 
 [build-system]
 requires = ["setuptools>=61.0"]

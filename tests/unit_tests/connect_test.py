@@ -61,6 +61,7 @@ class TestConnect(TestCase):
             host="localhost",
             port=8080
         )
+        mock_client_object.assert_called_once_with(client="HttpClient", host="localhost", port=8080)
 
     def test_http_connect_missing_host(self):
         with self.assertRaises(Exception) as context:

@@ -176,9 +176,35 @@ class ChromadbConnection(BaseConnection):
 
         @streamlit.cache_data(ttl=10)
         def get_data() -> pd.DataFrame:
-            collection = self._raw_instance.get_collection(collection_name)
-            collection_data = collection.get(
-                include=attributes
-            )
-            return pd.DataFrame(data=collection_data)
+            try:
+                collection = self._raw_instance.get_collection(collection_name)
+                collection_data = collection.get(
+                    include=attributes
+                )
+                return pd.DataFrame(data=collection_data)
+            except Exception as exception:
+                raise Exception(f"Error while getting data from collection `{collection_name}`: {str(exception)}")
         return get_data()
+
+    def query(self,
+              collection_name: str,
+              query: List,
+              where_metadata_filter: Dict = None,
+              where_document_filter: Dict = None,
+              num_results_limit: int = 10,
+              attributes: List = ["distances", "documents", "embeddings", "metadatas", "uris", "data"],
+            ) -> pd.DataFrame:
+        try:
+            collection = self._raw_instance.get_collection(collection_name)
+            results = collection.query(
+                query_texts=query,
+                n_results=num_results_limit,
+                include=attributes,
+                where=where_metadata_filter,
+                where_document=where_document_filter
+            )
+            df = pd.DataFrame(data=results)
+            return df[["ids"] + attributes]
+
+        except Exception as exception:
+            raise Exception(f"Error while querying collection `{collection_name}`: {str(exception)}")

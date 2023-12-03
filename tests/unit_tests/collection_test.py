@@ -251,7 +251,7 @@ class TestCollection(TestCase):
             self.assertLessEqual(len(queried_data["ids"]), 3)
 
         except Exception as ex:
-            self.fail(f"get_collection_data() raised Exception: {str(ex)}!")
+            self.fail(f"query() raised Exception: {str(ex)}!")
         finally:
             shutil.rmtree(mock_persistent_dir)
 
@@ -286,5 +286,48 @@ class TestCollection(TestCase):
             self.assertEqual(len(existing_data), 3)
         except Exception as ex:
             self.fail(f"get_collection_data() raised Exception: {str(ex)}!")
+        finally:
+            shutil.rmtree(mock_persistent_dir)
+
+    def test_query_collection_with_filter(self):
+        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/query_filter_data_persistent"
+        os.mkdir(mock_persistent_dir)
+        mock_connection = streamlit.connection(
+            name="test_query_collection_with_filter",
+            type=ChromadbConnection,
+            client="PersistentClient",
+            path=mock_persistent_dir
+        )
+
+        try:
+            mock_connection.create_collection(
+                collection_name="test_query_filter_collection",
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
+            )
+
+            mock_connection.upload_document(
+                collection_name="test_query_filter_collection",
+                documents=["this is a", "this is b", "this is c"],
+                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                ids=["id1", "id2", "id3"],
+                embeddings=None,
+            )
+            existing_data = mock_connection.get_collection_data(
+                collection_name="test_query_filter_collection",
+                attributes=["documents", "embeddings", "metadatas"]
+            )
+            self.assertEqual(len(existing_data), 3)
+            queried_data = mock_connection.query(
+                collection_name="test_query_filter_collection",
+                query=["this is"],
+                num_results_limit=10,
+                attributes=["documents", "embeddings", "metadatas", "data"],
+                where_metadata_filter={"chapter": "3"},
+            )
+            self.assertLessEqual(len(queried_data["ids"]), 1)
+
+        except Exception as ex:
+            self.fail(f"query() raised Exception: {str(ex)}!")
         finally:
             shutil.rmtree(mock_persistent_dir)

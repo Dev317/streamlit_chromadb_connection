@@ -15,7 +15,7 @@ configuration = {
 
 collection_name = "documents_collection"
 
-conn = st.experimental_connection("chromadb",
+conn = st.connection("chromadb",
                                 type=ChromaDBConnection,
                                 **configuration)
 documents_collection_df = conn.get_collection_data(collection_name)

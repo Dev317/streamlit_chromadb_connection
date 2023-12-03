@@ -157,10 +157,10 @@ Metadata and document filters are also provided in `where_metadata_filter` and `
 
 ```python
 queried_data = conn.query(collection_name=collection_name,
-    query=["this is"],
-    num_results_limit=10,
-    attributes=["documents", "embeddings", "metadatas", "data"],
-    where_metadata_filter={"chapter": "3"})
+                         query=["this is"],
+                         num_results_limit=10,
+                         attributes=["documents", "embeddings", "metadatas", "data"],
+                         where_metadata_filter={"chapter": "3"})
 ```
 
 
@@ -170,7 +170,7 @@ queried_data = conn.query(collection_name=collection_name,
 
 ## Contribution 🔥
 ```
-    author={Vu Quang Minh},
-    github={Dev317},
-    year={2023}
+author={Vu Quang Minh},
+github={Dev317},
+year={2023}
 ```

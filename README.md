@@ -53,9 +53,8 @@ There are 2 ways to connect to a Chroma client:
     }
 
     conn = st.connection(name="http_connection",
-                type=ChromadbConnection,
-                **configuration
-            )
+                         type=ChromadbConnection,
+                         **configuration)
     ```
 
 
@@ -128,13 +127,11 @@ If embeddings are not provided, the method will embed the documents using the em
 
 ```python
 collection_name = "documents_collection"
-conn.upload_document(
-                collection_name=collection_name,
-                documents=["lorem ipsum", "doc2", "doc3"],
-                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
-                ids=["id1", "id2", "id3"],
-                embeddings=None,
-            )
+conn.upload_document(collection_name=collection_name,
+                     documents=["lorem ipsum", "doc2", "doc3"],
+                     metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                     ids=["id1", "id2", "id3"],
+                     embeddings=None)
 ```
 
 ### query()
@@ -142,13 +139,29 @@ This method retrieves top k relevant document based on a list of queries supplie
 The result will be in a dataframe where each row will shows the top k relevant documents of each query.
 
 ```python
-queried_data = conn.query(
-                collection_name="test_query_collection",
-                query=["random_query1", "random_query2"],
-                num_results_limit=10,
-                attributes=["documents", "embeddings", "metadatas", "data"]
-            )
+collection_name = "documents_collection"
+conn.upload_document(collection_name=collection_name,
+                     documents=["lorem ipsum", "doc2", "doc3"],
+                     metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                     ids=["id1", "id2", "id3"],
+                     embeddings=None)
+
+queried_data = conn.query(collection_name=collection_name,
+                          query=["random_query1", "random_query2"],
+                          num_results_limit=10,
+                          attributes=["documents", "embeddings", "metadatas", "data"])
 ```
+
+Metadata and document filters are also provided in `where_metadata_filter` and `where_document_filter` arguments respectively for more relevant search. For better understanding on the usage of where filters, please refer to: https://docs.trychroma.com/usage-guide#using-where-filters
+
+```python
+queried_data = conn.query(collection_name=collection_name,
+    query=["this is"],
+    num_results_limit=10,
+    attributes=["documents", "embeddings", "metadatas", "data"],
+    where_metadata_filter={"chapter": "3"})
+```
+
 
 ***
 🎉 That's it! `ChromaDBConnection` is ready to be used with `st.connection()`. 🎉

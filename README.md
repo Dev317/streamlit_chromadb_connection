@@ -86,16 +86,16 @@ embedding_config = {
 One can also change the distance function by changing the `metadata` argument, such as:
 
 ```python
-metadata = {"hnsw:space": "l2"} // Squared L2 norm
-metadata = {"hnsw:space": "cosine"} // Cosine similarity
-metadata = {"hnsw:space": "ip"} // Inner product
+metadata = {"hnsw:space": "l2"} # Squared L2 norm
+metadata = {"hnsw:space": "cosine"} # Cosine similarity
+metadata = {"hnsw:space": "ip"} # Inner product
 ```
 
 Sample code to create connection:
 
 ```python
 collection_name = "documents_collection"
-embedding_function_name = "DefaultEmbedding"
+embedding_function_name = "DefaultEmbeddingFunction"
 conn.create_collection(collection_name=collection_name,
                        embedding_function_name=embedding_function_name,
                        embedding_config={},

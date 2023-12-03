@@ -213,6 +213,40 @@ class TestCollection(TestCase):
         finally:
             shutil.rmtree(mock_persistent_dir)
 
+    def test_get_collection_data(self):
+        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/get_data_persistent"
+        os.mkdir(mock_persistent_dir)
+        mock_connection = streamlit.connection(
+            name="test_get_data",
+            type=ChromadbConnection,
+            client="PersistentClient",
+            path=mock_persistent_dir
+        )
+
+        try:
+            mock_connection.create_collection(
+                collection_name="test_get_data",
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
+            )
+
+            mock_connection.upload_document(
+                collection_name="test_get_data",
+                documents=["lorem ipsum", "doc2", "doc3"],
+                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                ids=["id1", "id2", "id3"],
+                embeddings=None,
+            )
+            existing_data = mock_connection.get_collection_data(
+                collection_name="test_get_data",
+                attributes=["documents", "embeddings", "metadatas"]
+            )
+            self.assertEqual(len(existing_data), 3)
+        except Exception as ex:
+            self.fail(f"get_collection_data() raised Exception: {str(ex)}!")
+        finally:
+            shutil.rmtree(mock_persistent_dir)
+
     def test_query_collection(self):
         mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/query_data_persistent"
         os.mkdir(mock_persistent_dir)
@@ -252,40 +286,6 @@ class TestCollection(TestCase):
 
         except Exception as ex:
             self.fail(f"query() raised Exception: {str(ex)}!")
-        finally:
-            shutil.rmtree(mock_persistent_dir)
-
-    def test_get_collection_data(self):
-        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/get_data_persistent"
-        os.mkdir(mock_persistent_dir)
-        mock_connection = streamlit.connection(
-            name="test_get_data",
-            type=ChromadbConnection,
-            client="PersistentClient",
-            path=mock_persistent_dir
-        )
-
-        try:
-            mock_connection.create_collection(
-                collection_name="test_get_data",
-                embedding_function_name="DefaultEmbeddingFunction",
-                embedding_config={},
-            )
-
-            mock_connection.upload_document(
-                collection_name="test_get_data",
-                documents=["lorem ipsum", "doc2", "doc3"],
-                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
-                ids=["id1", "id2", "id3"],
-                embeddings=None,
-            )
-            existing_data = mock_connection.get_collection_data(
-                collection_name="test_get_data",
-                attributes=["documents", "embeddings", "metadatas"]
-            )
-            self.assertEqual(len(existing_data), 3)
-        except Exception as ex:
-            self.fail(f"get_collection_data() raised Exception: {str(ex)}!")
         finally:
             shutil.rmtree(mock_persistent_dir)
 

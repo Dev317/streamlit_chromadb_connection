@@ -194,6 +194,16 @@ class ChromadbConnection(BaseConnection):
               num_results_limit: int = 10,
               attributes: List = ["distances", "documents", "embeddings", "metadatas", "uris", "data"],
             ) -> pd.DataFrame:
+        """
+        This method queries a collection in ChromaDB based on a list of query texts.
+        The `where_metadata_filter` argument is a dictionary that contains the metadata filter.
+        The `where_document_filter` argument is a dictionary that contains the document filter.
+        The `num_results_limit` argument is the number of results to be returned.
+        The `attributes` argument is a list of attributes to be included in the DataFrame.
+
+        The return dataframe will only contain one row of result for each query text.
+        """
+
         try:
             collection = self._raw_instance.get_collection(collection_name)
             results = collection.query(

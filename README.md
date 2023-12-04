@@ -1,6 +1,6 @@
 # 📂 ChromaDBConnection
 
-![Screenshot](demo_ss.png)
+![alt text](https://github.com/Dev317/streamlit_chromadb_connection/blob/main/demo_ss.png)
 
 Connection for Chroma vector database, `ChromaDBConnection`, has been released which makes it easy to connect any Streamlit LLM-powered app to.
 

@@ -102,7 +102,7 @@ class TestCollection(TestCase):
             shutil.rmtree(mock_persistent_dir)
 
     def test_delete_non_existing_collection(self):
-        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/delete_persistent"
+        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/delete_non_existing_persistent"
         os.mkdir(mock_persistent_dir)
         mock_connection = streamlit.connection(
             name="test_delete_non_existing_collection",
@@ -144,7 +144,7 @@ class TestCollection(TestCase):
             shutil.rmtree(mock_persistent_dir)
 
     def test_get_non_existing_collection(self):
-        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/get_collection_persistent"
+        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/get_collection_non_persistent"
         os.mkdir(mock_persistent_dir)
         mock_connection = streamlit.connection(
             name="test_get_non_existing_collection",

@@ -201,7 +201,7 @@ class TestCollection(TestCase):
                 embedding_config={},
             )
 
-           mock_connection.upload_document(
+           mock_connection.upload_documents(
                 collection_name="test_add_collection",
                 documents=["lorem ipsum", "doc2", "doc3"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
@@ -230,7 +230,7 @@ class TestCollection(TestCase):
                 embedding_config={},
             )
 
-            mock_connection.upload_document(
+            mock_connection.upload_documents(
                 collection_name="test_get_data",
                 documents=["lorem ipsum", "doc2", "doc3"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
@@ -264,7 +264,7 @@ class TestCollection(TestCase):
                 embedding_config={},
             )
 
-            mock_connection.upload_document(
+            mock_connection.upload_documents(
                 collection_name="test_query_collection",
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
@@ -306,7 +306,7 @@ class TestCollection(TestCase):
                 embedding_config={},
             )
 
-            mock_connection.upload_document(
+            mock_connection.upload_documents(
                 collection_name="test_query_filter_collection",
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
@@ -329,5 +329,45 @@ class TestCollection(TestCase):
 
         except Exception as ex:
             self.fail(f"query() raised Exception: {str(ex)}!")
+        finally:
+            shutil.rmtree(mock_persistent_dir)
+
+    def test_update_collection_data(self):
+        mock_persistent_dir = f"{os.getcwd()}/tests/unit_tests/update_data_persistent"
+        os.mkdir(mock_persistent_dir)
+        mock_connection = streamlit.connection(
+            name="test_update_collection_data",
+            type=ChromadbConnection,
+            client="PersistentClient",
+            path=mock_persistent_dir
+        )
+
+        try:
+            mock_connection.create_collection(
+                collection_name="test_update_collection_data",
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
+            )
+
+            mock_connection.upload_documents(
+                collection_name="test_update_collection_data",
+                documents=["this is a", "this is b", "this is c"],
+                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                ids=["id1", "id2", "id3"],
+            )
+            mock_connection.update_collection_data(
+                collection_name="test_update_collection_data",
+                ids=["id1", "id2", "id3"],
+                documents=["this is b", "this is c", "this is d"],
+                metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                embeddings=None,
+            )
+            updated_data = mock_connection.get_collection_data(
+                collection_name="test_update_collection_data",
+                attributes=["documents", "embeddings", "metadatas"]
+            )
+            self.assertEqual(updated_data["documents"].tolist(), ["this is b", "this is c", "this is d"])
+        except Exception as ex:
+            self.fail(f"update_collection_data() raised Exception: {str(ex)}!")
         finally:
             shutil.rmtree(mock_persistent_dir)

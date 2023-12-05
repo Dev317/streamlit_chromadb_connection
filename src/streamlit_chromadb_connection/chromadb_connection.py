@@ -133,12 +133,12 @@ class ChromadbConnection(BaseConnection):
             collection_names.append(col.name)
         return collection_names
 
-    def upload_document(self,
+    def upload_documents(self,
                         collection_name: str,
                         documents: List,
                         metadatas: List,
-                        embeddings: List,
-                        ids: List) -> None:
+                        ids: List,
+                        embeddings: List = None) -> None:
         """
         This method uploads documents to a collection in ChromaDB.
         The `documents` argument is a list of documents, which contains list of texts to be embedded.
@@ -164,6 +164,30 @@ class ChromadbConnection(BaseConnection):
 
         except Exception as exception:
             raise Exception(f"Error while adding document to collection `{collection_name}`: {str(exception)}")
+
+    def update_collection_data(self,
+               collection_name: str,
+               ids: List,
+               documents: List,
+               metadatas: List,
+               embeddings: List = None) -> None:
+        """
+        This method updates documents in a collection in ChromaDB based on their existing ids.
+        """
+        try:
+            collection = self._raw_instance.get_collection(collection_name)
+            for idx, doc in enumerate(documents):
+                if not embeddings:
+                    embedding = collection._embedding_function([doc])
+                else:
+                    embedding = embeddings[idx]
+
+                collection.update(ids=ids[idx],
+                            metadatas=metadatas[idx],
+                            documents=doc,
+                            embeddings=embedding)
+        except Exception as exception:
+            raise Exception(f"Error while updating document in collection `{collection_name}`: {str(exception)}")
 
 
     def get_collection_data(self,

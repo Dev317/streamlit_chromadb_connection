@@ -19,8 +19,8 @@ configuration = {
 collection_name = "documents_collection"
 
 conn = st.connection("chromadb",
-                    type=ChromaDBConnection,
-                    **configuration)
+                     type=ChromaDBConnection,
+                     **configuration)
 documents_collection_df = conn.get_collection_data(collection_name)
 st.dataframe(documents_collection_df)
 ```
@@ -40,8 +40,8 @@ There are 2 ways to connect to a Chroma client:
     }
 
     conn = st.connection(name="persistent_chromadb",
-                        type=ChromadbConnection,
-                        **configuration)
+                         type=ChromadbConnection,
+                         **configuration)
     ```
 
 2. **HttpClient**: Data will be persisted to a cloud server where Chroma resides
@@ -112,7 +112,7 @@ The following code snippet will return all data in a collection in the form of a
 ```python
 collection_name = "documents_collection"
 conn.get_collection_data(collection_name=collection_name,
-                        attributes= ["documents", "embeddings"])
+                         attributes= ["documents", "embeddings"])
 ```
 
 ### delete_collection()
@@ -123,18 +123,31 @@ collection_name = "documents_collection"
 conn.delete_collection(collection_name=collection_name)
 ```
 
-### upload_document()
+### upload_documents()
 This method uploads documents to a collection.
 If embeddings are not provided, the method will embed the documents using the embedding function specified in the collection.
 
 
 ```python
 collection_name = "documents_collection"
-conn.upload_document(collection_name=collection_name,
-                     documents=["lorem ipsum", "doc2", "doc3"],
+conn.upload_documents(collection_name=collection_name,
+                      documents=["lorem ipsum", "doc2", "doc3"],
+                      metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                      ids=["id1", "id2", "id3"])
+```
+
+### update_collection_data()
+This method updates documents in a collection based on their ids.
+
+```python
+conn.upload_documents(collection_name=collection_name,
+                     documents=["this is a", "this is b", "this is c"],
                      metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
-                     ids=["id1", "id2", "id3"],
-                     embeddings=None)
+                     ids=["id1", "id2", "id3"])
+
+conn.update_collection_data(collection_name=collection_name,
+                            documents=["this is b", "this is c", "this is d"],
+                            ids=["id1", "id2", "id3"])
 ```
 
 ### query()
@@ -143,7 +156,7 @@ The result will be in a dataframe where each row will shows the top k relevant d
 
 ```python
 collection_name = "documents_collection"
-conn.upload_document(collection_name=collection_name,
+conn.upload_documents(collection_name=collection_name,
                      documents=["lorem ipsum", "doc2", "doc3"],
                      metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                      ids=["id1", "id2", "id3"],
@@ -159,10 +172,10 @@ Metadata and document filters are also provided in `where_metadata_filter` and `
 
 ```python
 queried_data = conn.query(collection_name=collection_name,
-                         query=["this is"],
-                         num_results_limit=10,
-                         attributes=["documents", "embeddings", "metadatas", "data"],
-                         where_metadata_filter={"chapter": "3"})
+                          query=["this is"],
+                          num_results_limit=10,
+                          attributes=["documents", "embeddings", "metadatas", "data"],
+                          where_metadata_filter={"chapter": "3"})
 ```
 
 

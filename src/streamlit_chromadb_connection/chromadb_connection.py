@@ -14,12 +14,12 @@ from chromadb.utils.embedding_functions import (
     ONNXMiniLM_L6_V2,
     GoogleVertexEmbeddingFunction
 )
-from chromadb import Client
-from chromadb.api import Collection
-from typing import Dict, List
+from chromadb.api import ClientAPI
+from chromadb import PersistentClient, HttpClient
+from chromadb.api.models.Collection import Collection
+from typing import Dict, List, Union
 from typing_extensions import override
 import pandas as pd
-
 
 
 class ChromadbConnection(BaseConnection):
@@ -33,7 +33,7 @@ class ChromadbConnection(BaseConnection):
     @override
     def _connect(self,
                  client: str = "PersistentClient",
-                 **kwargs) -> Client:
+                 **kwargs) -> ClientAPI:
 
         if client == "PersistentClient":
             if "path" not in self._kwargs:
@@ -91,7 +91,7 @@ class ChromadbConnection(BaseConnection):
 
         try:
             embedding_function = EMBEDDING_FUNCTION_MAP[embedding_function_name](**embedding_config)
-            self._raw_instance.create_collection(
+            self._instance.create_collection(
                 name=collection_name,
                 embedding_function=embedding_function,
                 metadata=metadata
@@ -107,7 +107,7 @@ class ChromadbConnection(BaseConnection):
         """
 
         try:
-            self._raw_instance.delete_collection(name=collection_name)
+            self._instance.delete_collection(name=collection_name)
         except Exception as exception:
             raise Exception(f"Error while deleting collection `{collection_name}`: {str(exception)}")
 
@@ -118,7 +118,7 @@ class ChromadbConnection(BaseConnection):
         """
 
         try:
-            return self._raw_instance.get_collection(name=collection_name)
+            return self._instance.get_collection(name=collection_name)
         except Exception as exception:
             raise Exception(f"Error while getting collection `{collection_name}`: {str(exception)}")
 
@@ -128,7 +128,7 @@ class ChromadbConnection(BaseConnection):
         """
 
         collection_names = []
-        collections = self._raw_instance.list_collections()
+        collections = self._instance.list_collections()
         for col in collections:
             collection_names.append(col.name)
         return collection_names
@@ -150,7 +150,7 @@ class ChromadbConnection(BaseConnection):
         """
 
         try:
-            collection = self._raw_instance.get_collection(collection_name)
+            collection = self._instance.get_collection(collection_name)
             for idx, doc in enumerate(documents):
                 if not embeddings:
                     embedding = collection._embedding_function([doc])
@@ -158,9 +158,9 @@ class ChromadbConnection(BaseConnection):
                     embedding = embeddings[idx]
 
                 collection.add(ids=ids[idx],
-                            metadatas=metadatas[idx],
-                            documents=doc,
-                            embeddings=embedding)
+                                metadatas=metadatas[idx],
+                                documents=doc,
+                                embeddings=embedding)
 
         except Exception as exception:
             raise Exception(f"Error while adding document to collection `{collection_name}`: {str(exception)}")
@@ -175,7 +175,7 @@ class ChromadbConnection(BaseConnection):
         This method updates documents in a collection in ChromaDB based on their existing ids.
         """
         try:
-            collection = self._raw_instance.get_collection(collection_name)
+            collection = self._instance.get_collection(collection_name)
             for idx, doc in enumerate(documents):
                 if not embeddings:
                     embedding = collection._embedding_function([doc])
@@ -201,7 +201,7 @@ class ChromadbConnection(BaseConnection):
         @streamlit.cache_data(ttl=10)
         def get_data() -> pd.DataFrame:
             try:
-                collection = self._raw_instance.get_collection(collection_name)
+                collection = self._instance.get_collection(collection_name)
                 collection_data = collection.get(
                     include=attributes
                 )
@@ -229,7 +229,7 @@ class ChromadbConnection(BaseConnection):
         """
 
         try:
-            collection = self._raw_instance.get_collection(collection_name)
+            collection = self._instance.get_collection(collection_name)
             results = collection.query(
                 query_texts=query,
                 n_results=num_results_limit,
@@ -237,8 +237,16 @@ class ChromadbConnection(BaseConnection):
                 where=where_metadata_filter,
                 where_document=where_document_filter
             )
-            df = pd.DataFrame(data=results)
-            return df[["ids"] + attributes]
+            df = pd.DataFrame()
+            df["ids"] = results["ids"]
+
+            for k in attributes:
+                if results[k] is None:
+                    df[k] = [None] * len(df)
+                else:
+                    df[k] = results[k]
+
+            return df
 
         except Exception as exception:
             raise Exception(f"Error while querying collection `{collection_name}`: {str(exception)}")

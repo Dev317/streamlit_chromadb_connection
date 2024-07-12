@@ -16,13 +16,27 @@ from chromadb.utils.embedding_functions import (
 )
 from chromadb.api import ClientAPI
 from chromadb import PersistentClient, HttpClient
+from chromadb.api.types import Documents, EmbeddingFunction
 from chromadb.api.models.Collection import Collection
-from typing import Dict, List, Union
+from typing import Dict, List, Union, cast
 from typing_extensions import override
 import pandas as pd
 
 
 class ChromadbConnection(BaseConnection):
+    
+    EMBEDDING_FUNCTION_MAP = {
+        "DefaultEmbeddingFunction": DefaultEmbeddingFunction,
+        "SentenceTransformerEmbeddingFunction": SentenceTransformerEmbeddingFunction,
+        "OpenAIEmbeddingFunction": OpenAIEmbeddingFunction,
+        "CohereEmbeddingFunction": CohereEmbeddingFunction,
+        "GooglePalmEmbeddingFunction": GooglePalmEmbeddingFunction,
+        "GoogleVertexEmbeddingFunction": GoogleVertexEmbeddingFunction,
+        "HuggingFaceEmbeddingFunction": HuggingFaceEmbeddingFunction,
+        "InstructorEmbeddingFunction": InstructorEmbeddingFunction,
+        "Text2VecEmbeddingFunction": Text2VecEmbeddingFunction,
+        "ONNXMiniLM_L6_V2": ONNXMiniLM_L6_V2
+    }
 
     """
     This class acts as an adapter to connect to ChromaDB vector database.
@@ -73,24 +87,11 @@ class ChromadbConnection(BaseConnection):
         The `metadata` argument is a dictionary that contains the configuration for the distance method.
         """
 
-        EMBEDDING_FUNCTION_MAP = {
-            "DefaultEmbeddingFunction": DefaultEmbeddingFunction,
-            "SentenceTransformerEmbeddingFunction": SentenceTransformerEmbeddingFunction,
-            "OpenAIEmbeddingFunction": OpenAIEmbeddingFunction,
-            "CohereEmbeddingFunction": CohereEmbeddingFunction,
-            "GooglePalmEmbeddingFunction": GooglePalmEmbeddingFunction,
-            "GoogleVertexEmbeddingFunction": GoogleVertexEmbeddingFunction,
-            "HuggingFaceEmbeddingFunction": HuggingFaceEmbeddingFunction,
-            "InstructorEmbeddingFunction": InstructorEmbeddingFunction,
-            "Text2VecEmbeddingFunction": Text2VecEmbeddingFunction,
-            "ONNXMiniLM_L6_V2": ONNXMiniLM_L6_V2
-        }
-
-        if embedding_function_name not in EMBEDDING_FUNCTION_MAP:
+        if embedding_function_name not in self.EMBEDDING_FUNCTION_MAP:
             raise Exception("Invalid embedding function provided in `embedding_function` argument!")
 
         try:
-            embedding_function = EMBEDDING_FUNCTION_MAP[embedding_function_name](**embedding_config)
+            embedding_function = self.EMBEDDING_FUNCTION_MAP[embedding_function_name](**embedding_config)
             self._instance.create_collection(
                 name=collection_name,
                 embedding_function=embedding_function,
@@ -138,6 +139,8 @@ class ChromadbConnection(BaseConnection):
                         documents: List,
                         metadatas: List,
                         ids: List,
+                        embedding_function_name: str = "",
+                        embedding_config: Dict = {},
                         embeddings: List = None) -> None:
         """
         This method uploads documents to a collection in ChromaDB.
@@ -147,10 +150,20 @@ class ChromadbConnection(BaseConnection):
         The `ids` argument is a list of ids, which contains list of ids for each document.
 
         If embeddings are not provided, the method will embed the documents using the embedding function specified in the collection.
-        """
+        """        
+        if embedding_function_name not in self.EMBEDDING_FUNCTION_MAP:
+            raise Exception("Invalid embedding function provided in `embedding_function` argument!")
+
+        embedding_function = cast(
+            EmbeddingFunction[Documents],
+            self.EMBEDDING_FUNCTION_MAP[embedding_function_name](**embedding_config),
+        )
 
         try:
-            collection = self._instance.get_collection(collection_name)
+            collection = self._instance.get_collection(
+                name=collection_name,
+                embedding_function=embedding_function
+            )
             for idx, doc in enumerate(documents):
                 if not embeddings:
                     embedding = collection._embedding_function([doc])
@@ -170,10 +183,20 @@ class ChromadbConnection(BaseConnection):
                ids: List,
                documents: List,
                metadatas: List,
+               embedding_function_name: str = "",
+               embedding_config: Dict = {},
                embeddings: List = None) -> None:
         """
         This method updates documents in a collection in ChromaDB based on their existing ids.
         """
+        if embedding_function_name not in self.EMBEDDING_FUNCTION_MAP:
+            raise Exception("Invalid embedding function provided in `embedding_function` argument!")
+
+        embedding_function = cast(
+            EmbeddingFunction[Documents],
+            self.EMBEDDING_FUNCTION_MAP[embedding_function_name](**embedding_config),
+        )
+
         try:
             collection = self._instance.get_collection(collection_name)
             for idx, doc in enumerate(documents):

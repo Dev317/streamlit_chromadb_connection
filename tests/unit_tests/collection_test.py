@@ -197,18 +197,19 @@ class TestCollection(TestCase):
         )
 
         try:
-           mock_connection.create_collection(
+            mock_connection.create_collection(
                 collection_name="test_add_collection",
                 embedding_function_name="DefaultEmbeddingFunction",
                 embedding_config={},
             )
 
-           mock_connection.upload_documents(
+            mock_connection.upload_documents(
                 collection_name="test_add_collection",
                 documents=["lorem ipsum", "doc2", "doc3"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
-                embeddings=None,
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
             )
         except Exception as ex:
             self.fail(f"add_document() raised Exception: {str(ex)}!")
@@ -237,6 +238,8 @@ class TestCollection(TestCase):
                 documents=["lorem ipsum", "doc2", "doc3"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
@@ -271,6 +274,8 @@ class TestCollection(TestCase):
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
@@ -313,6 +318,8 @@ class TestCollection(TestCase):
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
@@ -355,6 +362,8 @@ class TestCollection(TestCase):
                 collection_name="test_update_collection_data",
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 ids=["id1", "id2", "id3"],
             )
             mock_connection.update_collection_data(
@@ -362,7 +371,8 @@ class TestCollection(TestCase):
                 ids=["id1", "id2", "id3"],
                 documents=["this is b", "this is c", "this is d"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
-                embeddings=None,
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
             )
             updated_data = mock_connection.get_collection_data(
                 collection_name="test_update_collection_data",

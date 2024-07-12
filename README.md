@@ -130,9 +130,13 @@ If embeddings are not provided, the method will embed the documents using the em
 
 ```python
 collection_name = "documents_collection"
+embedding_function_name = "DefaultEmbeddingFunction"
+embedding_config = {}
 conn.upload_documents(collection_name=collection_name,
                       documents=["lorem ipsum", "doc2", "doc3"],
                       metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                      embeeding_function_name=embedding_function_name,
+                      embedding_config=embedding_config,
                       ids=["id1", "id2", "id3"])
 ```
 
@@ -140,13 +144,19 @@ conn.upload_documents(collection_name=collection_name,
 This method updates documents in a collection based on their ids.
 
 ```python
+embedding_function_name = "DefaultEmbeddingFunction"
+embedding_config = {}
 conn.upload_documents(collection_name=collection_name,
                      documents=["this is a", "this is b", "this is c"],
                      metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
+                     embeeding_function_name=embedding_function_name,
+                     embedding_config=embedding_config,
                      ids=["id1", "id2", "id3"])
 
 conn.update_collection_data(collection_name=collection_name,
                             documents=["this is b", "this is c", "this is d"],
+                            embeeding_function_name=embedding_function_name,
+                            embedding_config=embedding_config,
                             ids=["id1", "id2", "id3"])
 ```
 
@@ -156,10 +166,14 @@ The result will be in a dataframe where each row will shows the top k relevant d
 
 ```python
 collection_name = "documents_collection"
+embedding_function_name = "DefaultEmbeddingFunction"
+embedding_config = {}
 conn.upload_documents(collection_name=collection_name,
                      documents=["lorem ipsum", "doc2", "doc3"],
                      metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                      ids=["id1", "id2", "id3"],
+                     embeeding_function_name=embedding_function_name,
+                     embedding_config=embedding_config,
                      embeddings=None)
 
 queried_data = conn.query(collection_name=collection_name,

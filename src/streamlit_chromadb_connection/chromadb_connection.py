@@ -184,7 +184,7 @@ class ChromadbConnection(BaseConnection):
                documents: List,
                metadatas: List,
                embedding_function_name: str = "",
-                embedding_config: Dict = {},
+               embedding_config: Dict = {},
                embeddings: List = None) -> None:
         """
         This method updates documents in a collection in ChromaDB based on their existing ids.

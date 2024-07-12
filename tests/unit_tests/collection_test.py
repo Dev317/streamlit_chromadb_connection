@@ -238,6 +238,8 @@ class TestCollection(TestCase):
                 documents=["lorem ipsum", "doc2", "doc3"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
@@ -272,6 +274,8 @@ class TestCollection(TestCase):
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
@@ -314,6 +318,8 @@ class TestCollection(TestCase):
                 documents=["this is a", "this is b", "this is c"],
                 metadatas=[{"chapter": "3", "verse": "16"}, {"chapter": "3", "verse": "5"}, {"chapter": "29", "verse": "11"}],
                 ids=["id1", "id2", "id3"],
+                embedding_function_name="DefaultEmbeddingFunction",
+                embedding_config={},
                 embeddings=None,
             )
             existing_data = mock_connection.get_collection_data(
